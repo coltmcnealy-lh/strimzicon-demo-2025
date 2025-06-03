@@ -83,8 +83,8 @@ data:
   LHS_KAFKA_SASL_JAAS_CONFIG_FILE: /lh-secrets/sasl.jaas.config
   LHS_KAFKA_SASL_MECHANISM: SCRAM-SHA-512
   LHS_KAFKA_SECURITY_PROTOCOL: SASL_SSL
-  LHS_KAFKA_TRUSTSTORE: /lh-secrets/ca.p12
-  LHS_KAFKA_TRUSTSTORE_PASSWORD_FILE: /lh-secrets/ca.password
+  LHS_KAFKA_TRUSTSTORE: /kafka-secrets/ca.p12
+  LHS_KAFKA_TRUSTSTORE_PASSWORD_FILE: /kafka-secrets/ca.password
   LHS_LISTENERS: internal:2023,external:2024
   LHS_LISTENERS_AUTHENTICATION_MAP: internal:NONE,external:NONE
   LHS_LISTENERS_PROTOCOL_MAP: internal:PLAIN,external:PLAIN
@@ -100,13 +100,15 @@ data:
   LHS_STREAMS_SESSION_TIMEOUT: "45000"
   LHS_TIMER_STREAM_THREADS: "1"
 ---
-################ POD ##############3
+################ POD ##############
 
 apiVersion: v1
 kind: Pod
 metadata:
   name: lh-strimzicon-server
   namespace: strimzicon
+  labels:
+    littlehorse.io/server: lh-strimzicon-server
 spec:
   containers:
   - args:
@@ -155,11 +157,16 @@ spec:
     volumeMounts:
     - mountPath: /lh-data/
       name: lh-data
+    - mountPath: /kafka-secrets/
+      name: kafka-secrets
     - mountPath: /lh-secrets/
       name: lh-secrets
   restartPolicy: Always
   terminationGracePeriodSeconds: 30
   volumes:
+  - name: kafka-secrets
+    secret:
+      secretName: strimzicon-cluster-ca-cert
   - name: lh-secrets
     secret:
       defaultMode: 420
@@ -170,3 +177,18 @@ spec:
     name: lh-config
   - name: lh-data
     emptyDir: {}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: lh-strimzicon-server
+  namespace: strimzicon
+spec:
+  ports:
+  - name: internal
+    port: 2023
+    protocol: TCP
+    targetPort: 2023
+  selector:
+    littlehorse.io/server: lh-strimzicon-server
+  type: ClusterIP

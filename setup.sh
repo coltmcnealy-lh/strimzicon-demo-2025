@@ -40,7 +40,7 @@ helm upgrade --install envoygateway oci://docker.io/envoyproxy/gateway-helm \
     --create-namespace
 
 # Set up some stuff
-kubectl apply -f ${SCRIPT_DIR}/envoy-gateway-setup.yaml
-kubectl apply -f ${SCRIPT_DIR}/kafka.yaml
-kubectl apply -f ${SCRIPT_DIR}/user-and-topic.yaml
-kubectl apply -f ${SCRIPT_DIR}/littlehorse.yaml
+kubectl apply -f ${SCRIPT_DIR}/00-envoy-gateway-setup.yaml
+kubectl apply -f ${SCRIPT_DIR}/01-kafka.yaml
+kubectl apply -f ${SCRIPT_DIR}/02-user-and-topic.yaml
+kubectl apply -f ${SCRIPT_DIR}/03-lh.yaml
