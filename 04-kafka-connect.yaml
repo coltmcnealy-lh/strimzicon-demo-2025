@@ -1,0 +1,79 @@
+apiVersion: kafka.strimzi.io/v1beta2
+kind: KafkaUser
+metadata:
+  name: kafka-connect-user
+  namespace: strimzicon
+  labels:
+    littlehorse.io/cluster: lh-strimzicon
+    strimzi.io/cluster: strimzicon
+spec:
+  authentication:
+    type: scram-sha-512
+  authorization:
+    acls:
+    - operations:
+      - Describe
+      - DescribeConfigs
+      - IdempotentWrite
+      - Write
+      - Read
+      - Create
+      - ClusterAction
+      resource:
+        name: "*"
+        patternType: literal
+        type: topic
+    - operations:
+      - All
+      resource:
+        name: "*"
+        patternType: literal
+        type: group
+    - operations:
+      - All
+      resource:
+        name: "*"
+        patternType: literal
+        type: transactionalId
+    type: simple
+---
+apiVersion: kafka.strimzi.io/v1beta2
+kind: KafkaConnect
+metadata:
+  name: strimzicon-connect
+spec:
+  version: 4.0.0
+  replicas: 1
+  bootstrapServers: strimzicon-kafka-internal-bootstrap:9093
+  tls:
+    trustedCertificates:
+    - secretName: strimzicon-cluster-ca-cert
+      pattern: "*.crt"
+  authentication:
+    type: scram-sha-512
+    username: kafka-connect-user
+    passwordSecret:
+      secretName: kafka-connect-user
+      password: password
+  build:
+    output:
+      type: docker
+      image: kind-registry:5000/strimzicon-connect:latest
+      additionalKanikoOptions:
+      - "--insecure"
+      - "--single-snapshot"
+      - "--ignore-path=/product_uuid"
+    plugins:
+    - name: littlehorse-connector
+      artifacts:
+      - type: zip
+        url: https://github.com/littlehorse-enterprises/lh-kafka-connect/releases/download/v0.13.1/lh-kafka-connect-0.13.1.zip
+  config:
+    group.id: connect-cluster
+    offset.storage.topic: connect-cluster-offsets
+    config.storage.topic: connect-cluster-configs
+    status.storage.topic: connect-cluster-status
+    # -1 means it will use the default replication factor configured in the broker
+    config.storage.replication.factor: -1
+    offset.storage.replication.factor: -1
+    status.storage.replication.factor: -1
