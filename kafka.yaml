@@ -15,7 +15,8 @@ spec:
     authorization:
       type: simple
     listeners:
-    - authentication:
+    - name: external
+      authentication:
         type: scram-sha-512
       configuration:
         brokerCertChainAndKey:
@@ -33,8 +34,13 @@ spec:
           advertisedPort: 9092
           broker: 1
         createBootstrapService: true
-      name: obiwan
       port: 9092
+      tls: true
+      type: cluster-ip
+    - name: internal
+      authentication:
+        type: scram-sha-512
+      port: 9093
       tls: true
       type: cluster-ip
     version: 4.0.0

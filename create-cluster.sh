@@ -43,3 +43,4 @@ helm upgrade --install envoygateway oci://docker.io/envoyproxy/gateway-helm \
 kubectl apply -f ${SCRIPT_DIR}/envoy-gateway-setup.yaml
 kubectl apply -f ${SCRIPT_DIR}/kafka.yaml
 kubectl apply -f ${SCRIPT_DIR}/user-and-topic.yaml
+kubectl apply -f ${SCRIPT_DIR}/littlehorse.yaml
