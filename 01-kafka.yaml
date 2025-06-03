@@ -74,13 +74,13 @@ spec:
   - group: gateway.networking.k8s.io
     kind: Gateway
     name: my-gateway
-    namespace: strimzi
+    namespace: strimzicon
     sectionName: kafka
   rules:
   - backendRefs:
     - group: ""
       kind: Service
-      name: strimzicon-strimzicon-obiwan-0
+      name: strimzicon-strimzicon-external-0
       port: 9092
 ---
 apiVersion: gateway.networking.k8s.io/v1alpha2
@@ -101,7 +101,7 @@ spec:
   - backendRefs:
     - group: ""
       kind: Service
-      name: strimzicon-strimzicon-obiwan-1
+      name: strimzicon-strimzicon-external-1
       port: 9092
 ---
 apiVersion: gateway.networking.k8s.io/v1alpha2
@@ -122,7 +122,7 @@ spec:
   - backendRefs:
     - group: ""
       kind: Service
-      name: strimzicon-strimzicon-obiwan-2
+      name: strimzicon-strimzicon-external-2
       port: 9092
 ---
 apiVersion: gateway.networking.k8s.io/v1alpha2
@@ -143,5 +143,5 @@ spec:
   - backendRefs:
     - group: ""
       kind: Service
-      name: gateway-api-test-kafka-obiwan-bootstrap
+      name: strimzicon-kafka-external-bootstrap
       port: 9092

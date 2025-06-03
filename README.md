@@ -43,16 +43,16 @@ You should see the following pods:
 ```
 ->kgp -w
 NAME                                          READY   STATUS    RESTARTS   AGE
-cert-manager-5c66ff4789-8rcr2                 1/1     Running   0          18m
-cert-manager-cainjector-7f47fb946-5h6rg       1/1     Running   0          18m
-cert-manager-webhook-bbd99d8c6-74lnj          1/1     Running   0          18m
-lh-strimzicon-dashboard-865988dc9c-fdmkc      1/1     Running   0          30s
-lh-strimzicon-server                          1/1     Running   0          30s
-strimzi-cluster-operator-6f4fc4667c-cfnn7     1/1     Running   0          19m
-strimzicon-entity-operator-7c59b6cf4f-7dbm2   2/2     Running   0          17m
-strimzicon-strimzicon-0                       1/1     Running   0          18m
-strimzicon-strimzicon-1                       1/1     Running   0          18m
-strimzicon-strimzicon-2                       1/1     Running   0          18m
+cert-manager-5c66ff4789-c4w8v                 1/1     Running   0          2m16s
+cert-manager-cainjector-7f47fb946-nchcd       1/1     Running   0          2m16s
+cert-manager-webhook-bbd99d8c6-gc4hv          1/1     Running   0          2m16s
+lh-strimzicon-dashboard-5d6bbc5dc4-m85wh      1/1     Running   0          93s
+lh-strimzicon-server                          1/1     Running   0          93s
+strimzi-cluster-operator-6f4fc4667c-78vg2     1/1     Running   0          2m17s
+strimzicon-entity-operator-589b75fd8f-9r5q8   2/2     Running   0          49s
+strimzicon-strimzicon-0                       1/1     Running   0          88s
+strimzicon-strimzicon-1                       1/1     Running   0          88s
+strimzicon-strimzicon-2                       1/1     Running   0          88s
 ```
 
 The `strimzicon-strimzicon` pods are the Kafka cluster, managed by Strimzi!
@@ -60,6 +60,18 @@ The `strimzicon-strimzicon` pods are the Kafka cluster, managed by Strimzi!
 Lastly, you should be able to access the LittleHorse Dashboard at `http://lh-dashboard.strimzicon.demo` in your browser.
 
 ### Producing to Kafka
+
+First, load some Kafka credentials into a file in `/tmp`:
+
+```
+./create-kafka-config.sh
+```
+
+Next, produce some records!
+
+```
+./kafka-producer.sh
+```
 
 ### Deploying the Kafka Connector
 

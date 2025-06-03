@@ -9,11 +9,6 @@ metadata:
 spec:
   authentication:
     type: scram-sha-512
-    password:
-      valueFrom:
-        secretKeyRef:
-          name: lh-kafkauser-creds
-          key: password
   authorization:
     acls:
     - operations:
@@ -41,29 +36,6 @@ spec:
         patternType: prefix
         type: transactionalId
     type: simple
----
-apiVersion: v1
-kind: Secret
-metadata:
-  name: lh-kafkauser-creds
-  labels:
-    strimzi.io/kind: KafkaUser
-    strimzi.io/cluster: my-cluster  # Match your Kafka cluster name
-type: Opaque
-stringData:
-  password: HjKJZgxbxvkvOEGlDZtCZQEvtCQvach2
----
-apiVersion: v1
-kind: Secret
-metadata:
-  name: lh-strimzicon-server
-  namespace: strimzicon
-type: Opaque
-data:
-  ca.p12: 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
-  ca.password: UzhDOWZXRUhFa1Vw
-  sasl.jaas.config: b3JnLmFwYWNoZS5rYWZrYS5jb21tb24uc2VjdXJpdHkuc2NyYW0uU2NyYW1Mb2dpbk1vZHVsZSByZXF1aXJlZCB1c2VybmFtZT0ibGhjLWxoLXN0cmltemljb24iIHBhc3N3b3JkPSJIaktKWmd4Ynh2a3ZPRUdsRFp0Q1pRRXZ0Q1F2YWNoMiI7
-
 ---
 apiVersion: v1
 kind: ConfigMap
@@ -170,7 +142,7 @@ spec:
   - name: lh-secrets
     secret:
       defaultMode: 420
-      secretName: lh-strimzicon-server
+      secretName: lhc-lh-strimzicon
   - configMap:
       defaultMode: 420
       name: lh-strimzicon-server

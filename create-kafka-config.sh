@@ -1,5 +1,7 @@
 #!/bin/bash
 
+rm /tmp/strimzi-kafka-truststore.jks || true
+
 kubectl get secret my-certificate -o json | jq '.data."ca.crt"' | tr -d '"' | base64 --decode > /tmp/ca.crt
 keytool -importcert -alias ca -file /tmp/ca.crt -keystore /tmp/strimzi-kafka-truststore.jks -storepass kenobi
 
