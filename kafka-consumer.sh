@@ -5,7 +5,8 @@
 
 docker run -it --rm --network host \
     -v /tmp/:/tmp/ quay.io/strimzi/kafka:0.46.0-kafka-4.0.0 \
-    bin/kafka-console-producer.sh \
+    bin/kafka-console-consumer.sh \
     --bootstrap-server kafka-bootstrap.strimzicon.demo:9092 \
     --topic customer-arrivals \
-    --producer.config /tmp/kafka-client-config.properties
+    --from-beginning \
+    --consumer.config /tmp/kafka-client-config.properties
