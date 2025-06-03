@@ -41,6 +41,9 @@ apiVersion: kafka.strimzi.io/v1beta2
 kind: KafkaConnect
 metadata:
   name: strimzicon-connect
+  namespace: strimzicon
+  annotations:
+    strimzi.io/use-connector-resources: "true"
 spec:
   version: 4.0.0
   replicas: 1
@@ -83,7 +86,7 @@ kind: KafkaConnector
 metadata:
   name: wfrun-connector
   labels:
-    strimzi.io/cluster: strimzicon
+    strimzi.io/cluster: strimzicon-connect
 spec:
   class: io.littlehorse.connect.WfRunSinkConnector
   tasksMax: 2
