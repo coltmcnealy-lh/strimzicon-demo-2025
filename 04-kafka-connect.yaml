@@ -62,7 +62,7 @@ spec:
       additionalKanikoOptions:
       - "--insecure"
       - "--single-snapshot"
-      - "--ignore-path=/product_uuid"
+      - "--ignore-path=/product_uuidWr"
     plugins:
     - name: littlehorse-connector
       artifacts:
@@ -77,3 +77,21 @@ spec:
     config.storage.replication.factor: -1
     offset.storage.replication.factor: -1
     status.storage.replication.factor: -1
+---
+apiVersion: kafka.strimzi.io/v1beta2
+kind: KafkaConnector
+metadata:
+  name: wfrun-connector
+  labels:
+    strimzi.io/cluster: strimzicon
+spec:
+  class: io.littlehorse.connect.WfRunSinkConnector
+  tasksMax: 2
+  config:
+    topics: customer-arrivals
+    key.converter: org.apache.kafka.connect.storage.StringConverter
+    value.converter: org.apache.kafka.connect.storage.StringConverter
+    lhc.api.port: 2023
+    lhc.api.host: lh-strimzicon-server.strimzicon.svc.cluster.local
+    lhc.tenant.id: default
+    wf.spec.name: example-basic

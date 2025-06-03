@@ -57,7 +57,7 @@ spec:
     protocol: HTTP
     port: 8080
   - name: lh-server
-    protocol: GRPC
+    protocol: HTTP # grpcroutes must be http
     port: 2023
   - name: kafka
     protocol: TLS
