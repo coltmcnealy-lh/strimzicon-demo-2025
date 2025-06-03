@@ -1,0 +1,97 @@
+apiVersion: gateway.networking.k8s.io/v1
+kind: GatewayClass
+metadata:
+  name: my-gateway-class
+  namespace: envoy-gateway-system
+spec:
+  controllerName: gateway.envoyproxy.io/gatewayclass-controller
+  parametersRef:
+    group: gateway.envoyproxy.io
+    kind: EnvoyProxy
+    name: my-proxy-config
+    namespace: envoy-gateway-system
+---
+apiVersion: gateway.envoyproxy.io/v1alpha1
+kind: EnvoyProxy
+metadata:
+  name: my-proxy-config
+  namespace: envoy-gateway-system
+spec:
+  provider:
+    type: Kubernetes
+    kubernetes:
+      envoyDeployment:
+        replicas: 1
+      envoyService:
+        type: NodePort
+        patch:
+          value:
+            spec:
+              ports:
+              # Port 9092 on your laptop gets forwarded to NodePort 30992 on the KIND cluster.
+              - name: kafka
+                nodePort: 30092
+                port: 9092
+                protocol: TCP
+                targetPort: 9092
+              - name: lh-server
+                nodePort: 32023
+                port: 2023
+                protocol: TCP
+                targetPort: 2023
+              - name: lh-dashboard
+                nodePort: 30080
+                port: 8080
+                protocol: TCP
+                targetPort: 8080
+---
+apiVersion: gateway.networking.k8s.io/v1
+kind: Gateway
+metadata:
+  name: my-gateway
+  namespace: strimzicon
+spec:
+  gatewayClassName: my-gateway-class
+  listeners:
+  - name: lh-dashboard
+    protocol: HTTP
+    port: 8080
+  - name: lh-server
+    protocol: GRPC
+    port: 2023
+  - name: kafka
+    protocol: TLS
+    port: 9092
+    tls:
+      mode: Passthrough
+---
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: my-certificate
+  namespace: strimzicon
+spec:
+  secretName: my-certificate
+  subject:
+    organizations:
+    - my-org
+  privateKey:
+    algorithm: RSA
+    encoding: PKCS8
+    size: 2048
+  usages:
+  - server auth
+  - client auth
+  dnsNames:
+  - '*.strimzicon.demo'
+  issuerRef:
+    name: my-issuer
+    kind: ClusterIssuer
+---
+apiVersion: cert-manager.io/v1
+kind: ClusterIssuer
+metadata:
+  name: my-issuer
+  namespace: strimzicon
+spec:
+  selfSigned: {}

@@ -1,0 +1,141 @@
+apiVersion: kafka.strimzi.io/v1beta2
+kind: Kafka
+metadata:
+  annotations:
+    strimzi.io/node-pools: enabled
+    strimzi.io/kraft: enabled
+  name: strimzicon
+  namespace: strimzicon
+spec:
+  # We'll create a kafka topic and user so we need these operators.
+  entityOperator:
+    topicOperator: {}
+    userOperator: {}
+  kafka:
+    authorization:
+      type: simple
+    listeners:
+    - authentication:
+        type: scram-sha-512
+      configuration:
+        brokerCertChainAndKey:
+          certificate: tls.crt
+          key: tls.key
+          secretName: my-certificate
+        brokers:
+        - advertisedHost: kafka-0.strimzicon.demo
+          advertisedPort: 9092
+          broker: 0
+        - advertisedHost: kafka-1.strimzicon.demo
+          advertisedPort: 9092
+          broker: 1
+        - advertisedHost: kafka-2.strimzicon.demo
+          advertisedPort: 9092
+          broker: 1
+        createBootstrapService: true
+      name: obiwan
+      port: 9092
+      tls: true
+      type: cluster-ip
+    version: 4.0.0
+---
+apiVersion: kafka.strimzi.io/v1beta2
+kind: KafkaNodePool
+metadata:
+  name: strimzicon
+  namespace: strimzicon
+  labels:
+    strimzi.io/cluster: strimzicon
+spec:
+  replicas: 3
+  roles:
+  - controller
+  - broker
+  storage:
+    class: standard
+    size: 10G
+    type: persistent-claim
+---
+apiVersion: gateway.networking.k8s.io/v1alpha2
+kind: TLSRoute
+metadata:
+  name: broker-0
+  namespace: strimzicon
+spec:
+  hostnames:
+  - kafka-0.strimzicon.demo
+  parentRefs:
+  - group: gateway.networking.k8s.io
+    kind: Gateway
+    name: my-gateway
+    namespace: strimzi
+    sectionName: kafka
+  rules:
+  - backendRefs:
+    - group: ""
+      kind: Service
+      name: strimzicon-strimzicon-obiwan-0
+      port: 9092
+---
+apiVersion: gateway.networking.k8s.io/v1alpha2
+kind: TLSRoute
+metadata:
+  name: broker-1
+  namespace: strimzicon
+spec:
+  hostnames:
+  - kafka-1.strimzicon.demo
+  parentRefs:
+  - group: gateway.networking.k8s.io
+    kind: Gateway
+    name: my-gateway
+    namespace: strimzicon
+    sectionName: kafka
+  rules:
+  - backendRefs:
+    - group: ""
+      kind: Service
+      name: strimzicon-strimzicon-obiwan-1
+      port: 9092
+---
+apiVersion: gateway.networking.k8s.io/v1alpha2
+kind: TLSRoute
+metadata:
+  name: broker-2
+  namespace: strimzicon
+spec:
+  hostnames:
+  - kafka-2.strimzicon.demo
+  parentRefs:
+  - group: gateway.networking.k8s.io
+    kind: Gateway
+    name: my-gateway
+    namespace: strimzicon
+    sectionName: kafka
+  rules:
+  - backendRefs:
+    - group: ""
+      kind: Service
+      name: strimzicon-strimzicon-obiwan-2
+      port: 9092
+---
+apiVersion: gateway.networking.k8s.io/v1alpha2
+kind: TLSRoute
+metadata:
+  name: kafka-bootstrap
+  namespace: strimzicon
+spec:
+  hostnames:
+  - kafka-bootstrap.strimzicon.demo
+  parentRefs:
+  - group: gateway.networking.k8s.io
+    kind: Gateway
+    name: my-gateway
+    namespace: strimzicon
+    sectionName: kafka
+  rules:
+  - backendRefs:
+    - group: ""
+      kind: Service
+      name: gateway-api-test-kafka-obiwan-bootstrap
+      port: 9092
