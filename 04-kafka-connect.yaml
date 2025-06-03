@@ -97,4 +97,7 @@ spec:
     lhc.api.port: 2023
     lhc.api.host: lh-strimzicon-server.strimzicon.svc.cluster.local
     lhc.tenant.id: default
+    transforms: "HoistField"
+    transforms.HoistField.type: org.apache.kafka.connect.transforms.HoistField$Value
+    transforms.HoistField.field: input-name
     wf.spec.name: example-basic
