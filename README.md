@@ -40,6 +40,25 @@ Next, create the KIND cluster and deploy Strimzi, Kafka, Envoy Gateway, and Litt
 
 You should see the following pods:
 
+```
+->kgp -w
+NAME                                          READY   STATUS    RESTARTS   AGE
+cert-manager-5c66ff4789-8rcr2                 1/1     Running   0          18m
+cert-manager-cainjector-7f47fb946-5h6rg       1/1     Running   0          18m
+cert-manager-webhook-bbd99d8c6-74lnj          1/1     Running   0          18m
+lh-strimzicon-dashboard-865988dc9c-fdmkc      1/1     Running   0          30s
+lh-strimzicon-server                          1/1     Running   0          30s
+strimzi-cluster-operator-6f4fc4667c-cfnn7     1/1     Running   0          19m
+strimzicon-entity-operator-7c59b6cf4f-7dbm2   2/2     Running   0          17m
+strimzicon-strimzicon-0                       1/1     Running   0          18m
+strimzicon-strimzicon-1                       1/1     Running   0          18m
+strimzicon-strimzicon-2                       1/1     Running   0          18m
+```
+
+The `strimzicon-strimzicon` pods are the Kafka cluster, managed by Strimzi!
+
+Lastly, you should be able to access the LittleHorse Dashboard at `http://lh-dashboard.strimzicon.demo` in your browser.
+
 ### Producing to Kafka
 
 ### Deploying the Kafka Connector

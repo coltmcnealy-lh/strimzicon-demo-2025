@@ -192,3 +192,69 @@ spec:
   selector:
     littlehorse.io/server: lh-strimzicon-server
   type: ClusterIP
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: lh-strimzicon-dashboard
+  namespace: strimzicon
+  labels:
+    app: lh-strimzicon-dashboard
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: lh-strimzicon-dashboard
+  template:
+    metadata:
+      labels:
+        app: lh-strimzicon-dashboard
+    spec:
+      containers:
+        - name: lh-dashboard
+          image: ghcr.io/littlehorse-enterprises/littlehorse/lh-dashboard:latest
+          env:
+            - name: LHC_API_HOST
+              value: lh-strimzicon-server.strimzicon.svc.cluster.local
+            - name: LHC_API_PORT
+              value: "2023"
+            - name: LHC_OAUTH_ENABLED
+              value: "false"
+          ports:
+            - containerPort: 3000
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: lh-strimzicon-dashboard
+  namespace: strimzicon
+  labels:
+    app: lh-strimzicon-dashboard
+spec:
+  selector:
+    app: lh-strimzicon-dashboard
+  ports:
+    - name: http
+      port: 3000
+      targetPort: 3000
+---
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+  name: lh-strimzicon-dashboard
+  namespace: strimzicon
+spec:
+  parentRefs:
+    - name: my-gateway
+      namespace: strimzicon
+  hostnames:
+    - lh-dashboard.strimzicon.demo
+  rules:
+    - matches:
+        - path:
+            type: PathPrefix
+            value: /
+      backendRefs:
+        - name: lh-strimzicon-dashboard
+          port: 3000
