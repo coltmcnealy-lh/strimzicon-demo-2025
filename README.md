@@ -59,6 +59,22 @@ The `strimzicon-strimzicon` pods are the Kafka cluster, managed by Strimzi!
 
 Lastly, you should be able to access the LittleHorse Dashboard at `http://lh-dashboard.strimzicon.demo` in your browser.
 
+### Deploying the Kafka Connector
+
+You can deploy the Kafka Connect cluster and the connector as follows:
+
+```
+kubectl apply -f ./004-kafka-connect.yaml
+```
+
+### Set up LittleHorse Worfklow!
+
+```
+cd workflow && gradle run
+```
+
+You should see the `WfSpec` on the dashboard at `http://lh-dashboard.strimzicon.demo` in your browser.
+
 ### Producing to Kafka
 
 First, load some Kafka credentials into a file in `/tmp`:
@@ -72,8 +88,6 @@ Next, produce some records!
 ```
 ./kafka-producer.sh
 ```
-
-### Deploying the Kafka Connector
 
 
 ## Is There an Easier Way?

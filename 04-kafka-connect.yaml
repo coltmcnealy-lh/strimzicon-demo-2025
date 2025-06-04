@@ -99,5 +99,5 @@ spec:
     lhc.tenant.id: default
     transforms: "HoistField"
     transforms.HoistField.type: org.apache.kafka.connect.transforms.HoistField$Value
-    transforms.HoistField.field: input-name
-    wf.spec.name: example-basic
+    transforms.HoistField.field: customer-id
+    wf.spec.name: customer-arrival
