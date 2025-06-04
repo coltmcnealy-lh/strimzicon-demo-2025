@@ -14,6 +14,16 @@ This repository contains all of the code from my 2025 StrimziCon presentation, i
 
 For an in-depth breakdown, go ahead and watch the recording of the session. Or follow along here:
 
+### Requirements!
+
+You'll need:
+
+* `helm`
+* `docker`
+* `kind`
+* `gradle`
+* `java`
+
 ### Cluster Setup
 
 Put the following into your `/etc/hosts` file.
